@@ -15,35 +15,34 @@ public class Server {
             while (true){
                 System.out.println("Esperando conexão com cliente");
 
-                Socket s = ss.accept();
+                try (Socket s = ss.accept()) {
 
-                System.out.println("Conexão aceita: " + s.getInetAddress());
 
-                OutputStream outputStream = s.getOutputStream();
+                    System.out.println("Conexão aceita: " + s.getInetAddress());
 
-                String message = "Hello World";
+                    OutputStream outputStream = s.getOutputStream();
 
-                int lenght = getLengthStringToBytes(message);
+                    String message = "Hello World";
 
-                String httpResponse = String.format("""
-                        HTTP/1.1 200 OK\r
-                        Content-Type: text/plain\r
-                        Content-Length: %d\r
-                        \r
-                        """,
-                        lenght);
+                    byte[] bodyBytes = message.getBytes(StandardCharsets.UTF_8);
 
-                outputStream.write(httpResponse.getBytes(StandardCharsets.UTF_8));
+                    String httpResponse = String.format(
+                            "HTTP/1.1 200\r\n" +
+                                    "Content-Type: text/plan\r\n" +
+                            "Content-Length: %d\r\n" +
+                                    "Connection: close\r\n" +
+                                    "\r\n" +
+                                    "%s",
+                            bodyBytes.length,
+                            message
+                    );
 
-                outputStream.flush();
+                    outputStream.write(httpResponse.getBytes(StandardCharsets.UTF_8));
 
-                outputStream.write(message.getBytes(StandardCharsets.UTF_8));
+                    outputStream.flush();
 
-                outputStream.flush();
-
-                System.out.println("Fechando conexão");
-
-                s.close();
+                    System.out.println("Fechando conexão");
+                }
             }
         } catch (IOException e) {
             System.out.println("Erro:" + e);
