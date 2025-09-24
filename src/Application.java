@@ -1,7 +1,7 @@
-public class main {
+public class Application {
     public static void main(String[] args) throws InterruptedException {
 
-    Server server = new Server(8080);
+        Server server = new Server(8080);
 
     }
 }
