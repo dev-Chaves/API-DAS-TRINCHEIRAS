@@ -1,7 +1,7 @@
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class ConnectionHandler implements Runnable{
 
@@ -21,23 +21,62 @@ public class ConnectionHandler implements Runnable{
         try(Socket s = this.clientSocket){
             OutputStream outputStream = s.getOutputStream();
 
-            String msg = "Hello World";
+            BufferedReader reader = null;
 
-            byte[] bytesMsg = msg.getBytes(StandardCharsets.UTF_8);
+            InputStreamReader input = new InputStreamReader(s.getInputStream());
 
-            String httpResponse = String.format(
-                    "HTTP/1.1 200 OK\r\n"+
-                            "Content-Type: text/plain\r\n"+
-                            "Content-Length: %d\r\n"+
-                            "Connection: close\r\n"+
-                            "\r\n"+
-                            "%s",
-                    bytesMsg.length, msg
-            );
+            reader = new BufferedReader(input);
 
-            outputStream.write(httpResponse.getBytes(StandardCharsets.UTF_8));
+            String linha;
 
-            outputStream.flush();
+            String metodo = reader.readLine().toLowerCase().split(" ")[0].trim().toLowerCase();
+
+            switch (metodo){
+
+                case "post":
+                    int contentLength = 0;
+
+                    while ((linha = reader.readLine()) != null && !linha.isBlank()){
+                        if(linha.toLowerCase().startsWith("content-length:") ){
+
+                            contentLength = Integer.parseInt(linha.split(":")[1].trim());
+
+                            System.out.println("Content-length: " + contentLength);
+
+                        }
+                        System.out.println(linha);
+                    }
+
+                    char[] contet = new char[contentLength];
+
+                    reader.read(contet, 0, contentLength);
+
+                    String reqBody = new String(contet);
+
+                    ProdutoRequest produto = SerializerRequest.desserialize(reqBody);
+
+                    String httpResponse = String.format(
+                            "HTTP/1.1 200 OK\r\n"+
+                                    "Content-Type: application/json\r\n"+
+                                    "Content-Length: %d\r\n"+
+                                    "Connection: close\r\n"+
+                                    "\r\n"+
+                                    "%s",
+                            SerializerRequest.serialize(produto).length(), SerializerRequest.serialize(produto));
+
+
+                    outputStream.write(httpResponse.getBytes(StandardCharsets.UTF_8));
+
+                    outputStream.flush();
+                break;
+
+                case "get":
+                    System.out.println("feito o get");
+
+                break;
+            }
+
+            System.out.println("------------------------------ \r\n");
 
             System.out.println("Thread: " + Thread.currentThread());
 
