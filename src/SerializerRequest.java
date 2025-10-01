@@ -29,8 +29,6 @@ public class SerializerRequest {
 
         for (String parte : partes) {
 
-            String[] linha = parte.split(":");
-
             String parametro = (parte.split(":")[0].trim().replace("}", "").replace("\"", "").replace("{",""));
 
             System.out.println("Chave para o switch: ->" + parametro + "<-");
