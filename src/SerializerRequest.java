@@ -1,3 +1,5 @@
+import java.util.Locale;
+
 public class SerializerRequest {
 
     protected SerializerRequest(){
@@ -6,11 +8,11 @@ public class SerializerRequest {
 
     public static String serialize (ProdutoRequest json){
 
-        String response = String.format("""
+        String response = String.format(Locale.US, """
                 {  \s
                     "id": %d,
                     "nome": "%s",
-                    "preco": %f
+                    "preco": %.2f
                 }
                \s""", json.id(), json.nome(), json.preco());
 
