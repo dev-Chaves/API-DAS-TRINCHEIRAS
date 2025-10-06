@@ -33,7 +33,7 @@ public class SerializerRequest {
 
             String parametro = (parte.split(":")[0].trim().replace("}", "").replace("\"", "").replace("{",""));
 
-            System.out.println("Chave para o switch: ->" + parametro + "<-");
+//            System.out.println("Chave para o switch: ->" + parametro + "<-");
 
             switch (parametro){
                 case "id": id = Long.valueOf(parte.split(":")[1].trim().replace("}", ""));

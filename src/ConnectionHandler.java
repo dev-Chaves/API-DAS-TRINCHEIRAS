@@ -28,7 +28,7 @@ public class ConnectionHandler implements Runnable{
             reader = new BufferedReader(input);
 
             String linha;
-
+            // readLine permite a leitura apenas uma vez
             String metodo = reader.readLine().toLowerCase().split(" ")[0].trim().toLowerCase();
 
             switch (metodo){
@@ -41,10 +41,10 @@ public class ConnectionHandler implements Runnable{
 
                             contentLength = Integer.parseInt(linha.split(":")[1].trim());
 
-                            System.out.println("Content-length: " + contentLength);
+//                            System.out.println("Content-length: " + contentLength);
 
                         }
-                        System.out.println(linha);
+//                        System.out.println(linha);
                     }
 
                     char[] contet = new char[contentLength];
